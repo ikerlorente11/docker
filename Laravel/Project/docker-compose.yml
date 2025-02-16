@@ -1,0 +1,108 @@
+# PRODUCTION / DEVELOP
+# version: "3.8"
+# name: project_name
+# services:
+#   db:
+#     image: mysql
+#     container_name: project_name-db
+#     restart: unless-stopped
+#     environment:
+#       - MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD}
+#       - MYSQL_DATABASE=project_name
+#       - MYSQL_USER=${DB_USER}
+#       - MYSQL_PASSWORD=${DB_PASSWORD}
+#     ports:
+#       - 3306:3306
+#     healthcheck:
+#       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+#       interval: 2s
+#       timeout: 1s
+#       retries: 20
+#     networks:
+#       - project_name
+#   app:
+#     image: ikerlorente/laravel:v10-arm
+#     container_name: project_name-app
+#     entrypoint: /usr/local/bin/entrypoint.sh
+#     restart: unless-stopped
+#     environment:
+#       - DB_HOST=db
+#       - DB_PORT=3306
+#       - DB_USERNAME=${DB_USER}
+#       - DB_PASSWORD=${DB_PASSWORD}
+#       - DB_DATABASE=project_name
+#     ports:
+#       - 9000:9000
+#     volumes:
+#       - ./src:/var/www/html
+#       - ./entrypoint/laravel_entrypoint.sh:/usr/local/bin/entrypoint.sh
+#       - ./src/config/php.ini:/usr/local/etc/php/conf.d/php.ini
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#     networks:
+#       - project_name
+#   nginx:
+#     image: nginx:latest
+#     container_name: project_name-nginx
+#     restart: unless-stopped
+#     entrypoint: /usr/local/bin/entrypoint.sh
+#     ports:
+#       - 81:80
+#     volumes:
+#       - ./src:/var/www/html
+#       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+#       - ./entrypoint/nginx_entrypoint.sh:/usr/local/bin/entrypoint.sh
+#       - ./src/config/php.ini:/usr/local/etc/php/conf.d/php.ini
+#     depends_on:
+#       - app
+#     networks:
+#       - project_name
+
+# LOCAL
+# version: "3.8"
+# name: project_name
+# services:
+#   db:
+#     image: mysql
+#     container_name: project_name-db
+#     restart: unless-stopped
+#     environment:
+#       - MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD}
+#       - MYSQL_DATABASE=project_name
+#       - MYSQL_USER=${DB_USER}
+#       - MYSQL_PASSWORD=${DB_PASSWORD}
+#     ports:
+#       - 3306:3306
+#     healthcheck:
+#       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+#       interval: 2s
+#       timeout: 1s
+#       retries: 20
+#     networks:
+#       - project_name
+#   app:
+#     image: docker.io/bitnami/laravel:10
+#     command: sh -c "[ ! -d vendor ] && composer install && cp .env.example .env && php artisan key:generate; php artisan migrate --seed --force; /opt/bitnami/scripts/laravel/run.sh"
+#     container_name: project_name-app
+#     restart: unless-stopped
+#     environment:
+#       - DB_HOST=db
+#       - DB_PORT=3306
+#       - DB_USERNAME=${DB_USER}
+#       - DB_PASSWORD=${DB_PASSWORD}
+#       - DB_DATABASE=project_name
+#     ports:
+#       - 9000:8000
+#     volumes:
+#       - ./src:/app
+#       - ./src/config/php.ini:/opt/bitnami/php/etc/conf.d/php.ini
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#     networks:
+#       - project_name
+
+networks:
+  project_name:
+    driver: bridge
